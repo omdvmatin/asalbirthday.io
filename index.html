@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#f7d6e0" />
+<title>سورپرایز تولد 🎂</title>
+
+<!-- ============================================================
+     Vazirmatn (Persian font) from a reliable CDN + system fallback
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   1) DESIGN TOKENS  —  cohesive visual identity
+   ============================================================ */
+:root{
+  --blush:        #fdeef2;   /* soft blush pink */
+  --lavender:     #efe9fb;   /* subtle lavender */
+  --offwhite:     #fffaf6;   /* warm off-white */
+  --rose:         #d98aa6;   /* primary accent: muted rose pink */
+  --rose-deep:    #c26a8a;
+  --burgundy:     #7c3a52;   /* secondary accent */
+  --gold:         #d9b878;   /* soft gold */
+  --cream:        #fbead2;   /* cream */
+  --ink:          #4a3340;   /* readable warm text */
+  --ink-soft:     #7a6270;
+  --card-bg:      rgba(255,255,255,0.72);
+  --shadow:       0 18px 40px -20px rgba(124,58,82,0.45);
+  --radius-lg:    28px;
+  --radius-md:    20px;
+  --sp:           clamp(16px, 4vw, 26px);
+  --font:         "Vazirmatn", "Segoe UI", Tahoma, "Iranian Sans", system-ui, sans-serif;
+  --tap:          52px;      /* touch target height */
+}
+
+/* ============================================================
+   2) BASE / RESET
+   ============================================================ */
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  background:
+    radial-gradient(120% 80% at 80% 0%,   var(--blush) 0%, transparent 55%),
+    radial-gradient(120% 90% at 10% 100%, var(--lavender) 0%, transparent 55%),
+    linear-gradient(160deg, var(--offwhite) 0%, var(--blush) 55%, var(--lavender) 100%);
+  background-attachment:fixed;
+  min-height:100dvh;
+  overflow-x:hidden;                 /* no horizontal scroll */
+  line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  display:flex; align-items:center; justify-content:center;
+  padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+}
+
+/* ============================================================
+   3) STAGE + SCENES  —  scene management lives here visually
+   ============================================================ */
+#stage{
+  position:relative;
+  width:min(560px, 100%);
+  margin-inline:auto;
+}
+
+.scene{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap: calc(var(--sp) * .9);
+  text-align:center;
+  width:100%;
+}
+.scene.is-active{
+  display:flex;
+  animation: sceneEnter .55s cubic-bezier(.22,.61,.36,1) both;
+}
+@keyframes sceneEnter{
+  from{ opacity:0; transform: translateY(18px) scale(.985); }
+  to  { opacity:1; transform: none; }
+}
+
+/* Card that holds the dialogue */
+.card{
+  width:100%;
+  background:var(--card-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);
+  padding: calc(var(--sp) * 1.15) var(--sp);
+  display:flex; flex-direction:column; align-items:center; gap:18px;
+}
+
+/* Text */
+.title{
+  font-weight:900;
+  font-size:clamp(22px, 6.4vw, 30px);
+  color:var(--burgundy);
+  line-height:1.7;
+}
+.text{
+  font-weight:500;
+  font-size:clamp(16px, 4.6vw, 19px);
+  color:var(--ink);
+}
+.text.small{ font-size:clamp(14px, 4vw, 16px); color:var(--ink-soft); }
+.text + .text{ margin-top:4px; }
+
+/* ============================================================
+   3b) BACK BUTTON  —  visible on every scene except the first
+   ============================================================ */
+#backBtn{
+  position:fixed;
+  top:calc(14px + env(safe-area-inset-top));
+  left:14px;                              /* back = physical-left in RTL */
+  z-index:60;
+  font-family:var(--font);
+  font-weight:600; font-size:14px; color:var(--burgundy);
+  background:var(--card-bg);
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:999px;
+  padding:8px 16px; min-height:42px;
+  display:none; align-items:center; gap:7px;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  touch-action:manipulation;
+  transition: transform .12s ease, opacity .2s ease;
+}
+#backBtn.show{ display:inline-flex; }
+#backBtn:active{ transform:scale(.95); }
+#backBtn .arrow{ font-size:16px; line-height:1; }
+
+/* ============================================================
+   4) BUTTONS  —  consistent, touch-friendly, active states
+   ============================================================ */
+.btn{
+  font-family:var(--font);
+  font-weight:700;
+  font-size:clamp(16px, 4.6vw, 19px);
+  color:#fff;
+  background:linear-gradient(135deg, var(--rose) 0%, var(--rose-deep) 100%);
+  border:none;
+  border-radius:999px;
+  padding:0 30px;
+  min-height:var(--tap);
+  min-width:180px;
+  cursor:pointer;
+  box-shadow:0 12px 24px -12px var(--rose-deep);
+  transition: transform .12s ease, box-shadow .2s ease, opacity .2s ease;
+  touch-action:manipulation;
+}
+.btn:hover{ transform:translateY(-2px); }
+.btn:active{ transform:translateY(1px) scale(.98); box-shadow:0 6px 14px -10px var(--rose-deep); }
+.btn:disabled{ opacity:.45; cursor:default; transform:none; }
+.btn.ghost{
+  background:transparent;
+  color:var(--rose-deep);
+  border:2px solid var(--rose);
+  box-shadow:none;
+}
+.btn.row{ width:100%; max-width:340px; }
+
+/* Option buttons (Scene 3) */
+.options{ display:flex; flex-direction:column; gap:14px; width:100%; max-width:340px; }
+.option{
+  font-family:var(--font);
+  font-weight:600;
+  font-size:clamp(15px, 4.4vw, 18px);
+  color:var(--burgundy);
+  background:#fff;
+  border:2px solid var(--rose);
+  border-radius:var(--radius-md);
+  padding:16px 20px;
+  min-height:var(--tap);
+  cursor:pointer;
+  transition: transform .12s ease, background .2s ease, color .2s ease;
+}
+.option:active{ transform:scale(.98); }
+.option.chosen{ background:var(--rose); color:#fff; }
+
+/* ============================================================
+   5) PROGRESS INDICATOR  (question scenes)
+   ============================================================ */
+#progress{
+  display:flex; gap:8px; justify-content:center; align-items:center;
+  margin-bottom:6px;
+}
+#progress .dot{
+  width:9px; height:9px; border-radius:50%;
+  background:rgba(124,58,82,.22);
+  transition: background .3s ease, transform .3s ease;
+}
+#progress .dot.done{ background:var(--rose); }
+#progress .dot.current{ background:var(--gold); transform:scale(1.35); }
+
+/* ============================================================
+   6) STICKER COMPONENT  (personalized poses)
+   ============================================================ */
+.sticker{
+  --size: clamp(120px, 34vw, 190px);
+  width:var(--size); height:var(--size);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.sticker img{
+  width:100%; height:100%;
+  object-fit:contain;
+  filter: drop-shadow(0 14px 18px rgba(124,58,82,.22));
+  animation: stickerPop .5s cubic-bezier(.2,.9,.3,1.2) both;
+}
+@keyframes stickerPop{
+  from{ opacity:0; transform: translateY(14px) scale(.82); }
+  to  { opacity:1; transform: none; }
+}
+/* graceful fallback when the sticker file is missing */
+.sticker.is-empty{ width:var(--size); height:calc(var(--size) * .78); }
+.sticker .fallback{
+  display:none;
+  width:100%; height:100%;
+  align-items:center; justify-content:center;
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 40%, #fff, var(--blush));
+  border:2px dashed rgba(217,138,166,.55);
+  color:var(--rose-deep);
+  font-size:clamp(38px, 12vw, 62px);
+}
+.sticker.is-empty img{ display:none; }
+.sticker.is-empty .fallback{ display:flex; animation: stickerPop .5s both; }
+
+/* ============================================================
+   7) CAKE  —  17 candles, lit flames, number 17
+   ============================================================ */
+.cake-wrap{
+  position:relative;
+  width:100%;
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:8px;
+}
+.cake{
+  position:relative;
+  width:min(300px, 78vw);
+  display:flex; flex-direction:column; align-items:center;
+}
+
+/* candle row sits above the top layer */
+.candles{
+  display:flex; flex-wrap:wrap; justify-content:center;
+  gap:2px 6px;
+  width:100%;
+  max-width:270px;
+  margin-bottom:-4px;
+  z-index:3;
+  position:relative;
+}
+.candle{
+  position:relative;
+  width:9px;
+  display:flex; flex-direction:column; align-items:center;
+}
+/* striped candle body */
+.candle .stick{
+  width:7px; height:26px; border-radius:3px;
+  background:repeating-linear-gradient(135deg, #fff 0 4px, var(--rose) 4px 8px);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+}
+/* the wick */
+.candle .wick{ width:2px; height:4px; background:#5a4030; border-radius:2px; }
+/* the flame */
+.candle .flame{
+  width:12px; height:16px; margin-bottom:2px;
+  border-radius:50% 50% 50% 50% / 62% 62% 38% 38%;
+  background:radial-gradient(circle at 50% 72%, #fff7d6 0 22%, #ffd24a 42%, #ff8f2e 72%, rgba(255,120,40,0) 100%);
+  box-shadow:0 0 12px 4px rgba(255,180,70,.55);
+  transform-origin:50% 100%;
+  animation: flicker 1.1s ease-in-out infinite;
+  transition: opacity .5s ease, transform .5s ease;
+}
+@keyframes flicker{
+  0%,100%{ transform:scale(1) rotate(-2deg); opacity:.98; }
+  25%    { transform:scale(1.08,.94) rotate(2deg); opacity:1; }
+  50%    { transform:scale(.92,1.1) rotate(-1deg); opacity:.9; }
+  75%    { transform:scale(1.05,.97) rotate(1deg); opacity:1; }
+}
+/* extinguished state (stop flicker so opacity:0 actually wins) */
+.cake.out .flame{ animation:none; opacity:0; transform:scale(.3) translateY(-4px); }
+/* a wisp of smoke */
+.candle .smoke{
+  position:absolute; top:-6px; left:50%; width:6px; height:6px;
+  border-radius:50%; background:rgba(180,180,180,.0);
+  pointer-events:none;
+}
+.cake.out .smoke{ animation: smoke 1.6s ease-out .1s forwards; }
+@keyframes smoke{
+  0%  { background:rgba(200,200,200,.5); transform:translate(-50%,0) scale(.5); opacity:.8; }
+  100%{ background:rgba(210,210,210,0); transform:translate(-50%,-34px) scale(1.7); opacity:0; }
+}
+
+/* cake layers */
+.layer{
+  position:relative;
+  border-radius:14px 14px 10px 10px;
+  box-shadow: inset 0 -6px 12px rgba(124,58,82,.12), 0 8px 18px -12px rgba(124,58,82,.5);
+}
+.layer.top{
+  width:62%; height:52px; z-index:2;
+  background:linear-gradient(var(--cream), #f4d9b3);
+  border-top:10px solid #fff;
+  border-radius:14px 14px 6px 6px;
+}
+.layer.bottom{
+  width:100%; height:78px; margin-top:-8px; z-index:1;
+  background:linear-gradient(var(--blush), var(--rose) 160%);
+}
+/* frosting drips on the top layer */
+.drips{ position:absolute; inset:0; overflow:hidden; border-radius:inherit; }
+.drips::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:16px;
+  background:
+    radial-gradient(circle at 10% 0, #fff 0 9px, transparent 10px),
+    radial-gradient(circle at 32% 0, #fff 0 8px, transparent 9px),
+    radial-gradient(circle at 54% 0, #fff 0 10px, transparent 11px),
+    radial-gradient(circle at 76% 0, #fff 0 8px, transparent 9px),
+    radial-gradient(circle at 94% 0, #fff 0 9px, transparent 10px);
+}
+/* the "17" decoration on the cake */
+.age-badge{
+  position:absolute; top:38%; left:50%; transform:translate(-50%,-50%);
+  font-weight:900; font-size:clamp(20px,6.4vw,30px); color:var(--burgundy);
+  background:rgba(255,255,255,.85);
+  border:2px solid var(--gold);
+  border-radius:999px; padding:2px 16px; z-index:4;
+  box-shadow:0 6px 14px -8px rgba(124,58,82,.5);
+}
+.plate{
+  width:118%; height:16px; margin-top:4px; border-radius:50%;
+  background:linear-gradient(#fff, #e7dced);
+  box-shadow:0 14px 20px -14px rgba(124,58,82,.5);
+}
+
+/* ============================================================
+   8) COUNTDOWN overlay
+   ============================================================ */
+#countdown{
+  position:absolute; inset:0;
+  display:none; align-items:center; justify-content:center;
+  pointer-events:none; z-index:30;
+}
+#countdown.show{ display:flex; }
+#countdown .num{
+  font-weight:900;
+  font-size:clamp(90px, 30vw, 150px);
+  color:var(--rose-deep);
+  text-shadow:0 10px 30px rgba(194,106,138,.4);
+}
+#countdown .num.tick{ animation: countPop .9s cubic-bezier(.2,.9,.3,1.2) both; }
+@keyframes countPop{
+  0%  { opacity:0; transform:scale(.3); }
+  30% { opacity:1; transform:scale(1.15); }
+  70% { opacity:1; transform:scale(1); }
+  100%{ opacity:0; transform:scale(1.5); }
+}
+
+/* ============================================================
+   9) CELEBRATION — confetti, balloons, hearts, glow
+   ============================================================ */
+#fx{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:40; }
+.confetti{
+  position:absolute; top:-20px; width:10px; height:14px; opacity:.9;
+  animation: fall linear forwards;
+}
+@keyframes fall{
+  to{ transform: translateY(105vh) rotate(720deg); }
+}
+.balloon{
+  position:absolute; bottom:-120px; width:44px; height:56px;
+  border-radius:50% 50% 48% 48%;
+  animation: rise linear forwards;
+}
+.balloon::after{ content:""; position:absolute; top:100%; left:50%; width:1px; height:40px; background:rgba(0,0,0,.18); }
+@keyframes rise{
+  to{ transform: translateY(-120vh) translateX(var(--sway,20px)); }
+}
+.floatheart{ position:absolute; color:var(--rose); animation: floatUp ease-in forwards; }
+@keyframes floatUp{
+  0%{ opacity:0; transform:translateY(0) scale(.6); }
+  15%{ opacity:.9; }
+  100%{ opacity:0; transform:translateY(-140px) scale(1.1); }
+}
+
+/* ambient floating decorations (always on, subtle) */
+.ambient{ position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+.ambient .deco{ position:absolute; opacity:.28; animation: bob 6s ease-in-out infinite; }
+@keyframes bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-14px) } }
+
+/* ============================================================
+   9b) GIFT SCENE — two openable presents, cake moved aside
+   ============================================================ */
+.gift-stage{
+  position:relative;
+  width:100%;
+  display:flex; justify-content:center; align-items:flex-end;
+  gap:clamp(18px, 8vw, 48px);
+  padding:20px 8px 4px;
+  min-height:180px;
+}
+/* small cake floated to a corner ("کیک بره کنار") */
+.gift-stage .mini-cake{
+  position:absolute; top:2px; left:0;
+  transform:scale(.5); transform-origin:top left;
+  opacity:.9;
+}
+.gift{
+  position:relative;
+  width:clamp(96px, 30vw, 130px);
+  height:clamp(104px, 33vw, 142px);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.gift .gift-box{
+  position:absolute; bottom:0; left:8%; right:8%; height:66%;
+  background:linear-gradient(150deg, var(--rose) 0%, var(--rose-deep) 100%);
+  border-radius:10px 10px 12px 12px;
+  box-shadow: inset 0 -6px 12px rgba(124,58,82,.25), 0 12px 20px -12px rgba(124,58,82,.6);
+  overflow:hidden;
+}
+.gift .gift-box::before{ /* vertical ribbon */
+  content:""; position:absolute; top:0; bottom:0; left:50%; width:14px;
+  transform:translateX(-50%);
+  background:linear-gradient(var(--gold), #c69a4f);
+}
+.gift .gift-lid{
+  position:absolute; bottom:62%; left:0; right:0; height:24%;
+  background:linear-gradient(150deg, var(--cream), #e9cfa0);
+  border-radius:8px;
+  box-shadow:0 6px 12px -8px rgba(124,58,82,.6);
+  transform-origin:50% 100%;
+  transition:transform .5s cubic-bezier(.2,.9,.3,1.1), opacity .4s ease;
+  z-index:3;
+}
+.gift .gift-lid::before{ /* lid ribbon */
+  content:""; position:absolute; top:0; bottom:0; left:50%; width:14px;
+  transform:translateX(-50%); background:linear-gradient(var(--gold), #c69a4f);
+}
+.gift .gift-img{
+  position:absolute; bottom:66%; left:50%;
+  width:150%; height:150%;
+  transform:translate(-50%, 30px) scale(.2);
+  opacity:0; z-index:4;
+  border-radius:14px;
+  object-fit:contain;                 /* show the whole picture, no crop */
+  transition:transform .55s cubic-bezier(.2,.9,.3,1.25), opacity .4s ease;
+  pointer-events:none;
+}
+.gift .gift-emoji{ /* fallback if image missing */
+  position:absolute; bottom:66%; left:50%;
+  transform:translate(-50%, 30px) scale(.2);
+  opacity:0; z-index:4;
+  width:150%; height:150%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(40px,13vw,64px);
+  border-radius:14px;
+  background:radial-gradient(circle at 50% 40%, #fff, var(--blush));
+  transition:transform .55s cubic-bezier(.2,.9,.3,1.25), opacity .4s ease;
+}
+/* when a real image loaded, don't paint the emoji on top of it */
+.gift.has-img .gift-emoji{ display:none; }
+/* opened state */
+.gift.open .gift-lid{ transform:translateY(-46px) translateX(10px) rotate(-16deg); opacity:0; }
+.gift.open .gift-img, .gift.open .gift-emoji{ transform:translate(-50%,-6px) scale(1); opacity:1; }
+.gift:not(.open) .gift-img{ display:none; }
+.gift.hint .gift-box{ animation: giftWobble 1.6s ease-in-out infinite; }
+@keyframes giftWobble{ 0%,100%{transform:rotate(0)} 25%{transform:rotate(-3deg)} 75%{transform:rotate(3deg)} }
+
+/* ============================================================
+   10) SCENE 6 — video (dark, cinematic)
+   ============================================================ */
+.scene--dark{
+  background:radial-gradient(120% 90% at 50% 0%, #2a2140 0%, #14101f 60%, #0b0912 100%);
+}
+#stage.video-mode{ /* darkens surrounding page */ }
+.video-card{
+  width:100%;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius-lg);
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.7);
+  padding:var(--sp);
+  display:flex; flex-direction:column; gap:18px; align-items:center;
+}
+.video-card .title{ color:#fbead2; }
+.video-card .text{ color:#e7dff5; }
+.video-frame{
+  width:100%;
+  aspect-ratio:16/9;
+  background:#000;
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 20px 40px -20px #000;
+}
+.video-frame video{ width:100%; height:100%; display:block; background:#000; }
+.video-frame .video-fallback{
+  position:absolute; inset:0; display:none;
+  flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  color:#c9bfd6; text-align:center; padding:20px;
+}
+.video-frame.no-video .video-fallback{ display:flex; }
+.video-frame.no-video video{ display:none; }
+.video-frame .vstar{ position:absolute; color:#fff; opacity:.6; font-size:14px; animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle{ 0%,100%{opacity:.15; transform:scale(.8)} 50%{opacity:.9; transform:scale(1.2)} }
+
+/* ============================================================
+   11) UTILITIES + reduced motion
+   ============================================================ */
+.hidden{ display:none !important; }
+.fade-in{ animation: fadeIn .5s ease both; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.spacer{ height:6px; }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.05s !important;
+  }
+  .candle .flame{ animation:none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ambient floating hearts/stars (decorative, subtle) -->
+<div class="ambient" id="ambient" aria-hidden="true"></div>
+
+<!-- celebration effects layer (confetti/balloons/hearts) -->
+<div id="fx" aria-hidden="true"></div>
+
+<!-- background music: no controls, starts at the cake scene, loops, cannot be stopped -->
+<audio id="bgMusic" loop preload="auto" aria-hidden="true"></audio>
+
+<main id="stage">
+
+  <!-- back button (shown only when there is a previous step to return to) -->
+  <button id="backBtn" type="button" aria-label="برگشت به مرحله قبل">
+    <span class="arrow" aria-hidden="true">→</span><span>مرحله قبل</span>
+  </button>
+
+  <!-- progress indicator -->
+  <div id="progress" aria-hidden="true"></div>
+
+  <!-- ==========================================================
+       SCENE 1 — Opening Greeting
+       ========================================================== -->
+  <section class="scene" id="scene-1" data-step="1">
+    <div class="title">سلام به دختر کوچولوی خودم</div>
+    <div class="sticker" data-sticker="hello"></div>
+    <div class="card" style="background:transparent;border:none;box-shadow:none;padding:0;">
+      <button class="btn" data-next="scene-2">سلاااام</button>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 2 — First Question
+       ========================================================== -->
+  <section class="scene" id="scene-2" data-step="2">
+    <div class="sticker" data-sticker="thinking"></div>
+    <div class="card">
+      <div class="text" style="font-size:clamp(20px,5.6vw,26px);font-weight:800;color:var(--burgundy);">خوبی کوچولو؟</div>
+      <button class="btn" data-next="scene-3">عالیم</button>
+      <div class="text small">متاسفانه گزینه دیگه ای نداریم چون امروز فقط میتونی عالی باشی.</div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 3 — Guess the Day  (branching)
+       ========================================================== -->
+  <section class="scene" id="scene-3" data-step="3">
+    <div class="sticker" data-sticker="thinking"></div>
+    <div class="card">
+      <div class="text" style="font-size:clamp(20px,5.6vw,26px);font-weight:800;color:var(--burgundy);">میدونی امروز چه روزیه؟</div>
+      <div class="options">
+        <button class="option" data-branch="A">یه روز تخمی مثل بقیه روزا</button>
+        <button class="option" data-branch="B">یه روز خاص</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 3A — reaction to Option A (longer path) -->
+  <section class="scene" id="scene-3a" data-step="3">
+    <div class="sticker" data-sticker="explaining"></div>
+    <div class="card">
+      <div class="text" style="font-weight:800;color:var(--rose-deep);font-size:clamp(19px,5.2vw,24px);">نه، اشتباه گفتی!</div>
+      <div class="text">امروز یه روز خاصه؛ روزی که دختر کوچولوی من به دنیا اومده. فهمیدی؟</div>
+      <button class="btn" data-next="scene-4">آهااان!</button>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 4 — The Birthday Cake
+       ========================================================== -->
+  <section class="scene" id="scene-4" data-step="4">
+    <div class="card">
+      <div class="text small" id="cake-line-1">خب، حالا که رسیدیم به قسمت اصلی ماجرا...</div>
+      <div class="title" id="cake-line-2">یه آرزو کن.</div>
+      <div class="sticker" data-sticker="encouraging"></div>
+
+      <div class="cake-wrap">
+        <div class="cake" id="cake">
+          <div class="candles" id="candles"></div><!-- 17 candles injected -->
+          <div class="layer top"><div class="drips"></div></div>
+          <div class="layer bottom"><div class="age-badge">۱۷</div></div>
+          <div class="plate"></div>
+        </div>
+      </div>
+
+      <!-- dialogue that changes with the flow -->
+      <div class="text" id="cake-status" style="min-height:1.6em;font-weight:700;color:var(--burgundy);"></div>
+
+      <!-- action area: ready → بشمار → countdown → blow -->
+      <div id="cake-actions" style="display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;">
+        <button class="btn row" id="readyBtn">آرزو کردم</button>
+        <button class="btn row hidden" id="countBtn">بشمار</button>
+        <button class="btn row hidden" id="blowBtn">فوتتتت !</button>
+      </div>
+    </div>
+
+    <!-- countdown overlay lives over the stage -->
+    <div id="countdown"><div class="num" id="countNum">۵</div></div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 5 — Birthday Celebration
+       ========================================================== -->
+  <section class="scene" id="scene-5" data-step="5">
+    <div class="title">تولدت مبارک! 🎂</div>
+    <div class="sticker" data-sticker="celebrating"></div>
+    <div class="card">
+      <div class="text">تولدت مبارک دختر کوچولو خوردنی منننن</div>
+      <div class="cake-wrap" style="transform:scale(.82);">
+        <div class="cake out">
+          <div class="candles" id="candles2"></div>
+          <div class="layer top"><div class="drips"></div></div>
+          <div class="layer bottom"><div class="age-badge">۱۷</div></div>
+          <div class="plate"></div>
+        </div>
+      </div>
+      <button class="btn row hidden" id="moreBtn">یه چیز دیگه هم هست...</button>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 5B — The Gifts (cake moved aside, two presents)
+       ========================================================== -->
+  <section class="scene" id="scene-5b" data-step="5">
+    <div class="title">دو تا کادو برات دارم 🎁</div>
+    <div class="text small">روی هر کادو بزن تا بازش کنی.</div>
+    <div class="card" style="background:transparent;border:none;box-shadow:none;">
+      <div class="gift-stage">
+        <!-- cake, now tucked to the side -->
+        <div class="mini-cake cake out">
+          <div class="candles" id="candles3"></div>
+          <div class="layer top"><div class="drips"></div></div>
+          <div class="layer bottom"><div class="age-badge">۱۷</div></div>
+          <div class="plate"></div>
+        </div>
+
+        <div class="gift hint" data-gift="0">
+          <img class="gift-img" alt="کادو">
+          <div class="gift-emoji">🎁</div>
+          <div class="gift-lid"></div>
+          <div class="gift-box"></div>
+        </div>
+        <div class="gift hint" data-gift="1">
+          <img class="gift-img" alt="کادو">
+          <div class="gift-emoji">🎁</div>
+          <div class="gift-lid"></div>
+          <div class="gift-box"></div>
+        </div>
+      </div>
+    </div>
+    <div class="text hidden" id="giftAfterMsg" style="font-weight:800;color:var(--burgundy);font-size:clamp(18px,5vw,22px);">
+      خب حالا بریم کادوی اصلی رو ببینیم 🎁
+    </div>
+    <button class="btn row hidden" id="mainGiftBtn">کادوی اصلی</button>
+  </section>
+
+  <!-- ==========================================================
+       SCENE 6 — The 10-Second Video (dark, cinematic)
+       ========================================================== -->
+  <section class="scene scene--dark" id="scene-6" data-step="6">
+    <div class="video-card">
+      <div class="title">فکر کردی سورپرایز تموم شد؟</div>
+      <div class="text">میدونی که خیلی دوستت دارم عزیزم.</div>
+
+      <div class="video-frame" id="videoFrame">
+        <!-- decorative stars inside the dark frame -->
+        <span class="vstar" style="top:12%;right:10%;">✦</span>
+        <span class="vstar" style="top:22%;right:80%;animation-delay:.8s;">✧</span>
+        <span class="vstar" style="bottom:20%;right:16%;animation-delay:1.4s;">✦</span>
+
+        <video id="birthdayVideo" controls playsinline preload="metadata"
+               poster="" src="assets/vidu-video-3510148997296306.mp4"></video>
+
+        <div class="video-fallback">
+          <div style="font-size:44px;">🎬</div>
+          <div>ویدیو هنوز اضافه نشده.<br>فایل رو در مسیر <code style="color:var(--gold)">assets/vidu-video-3510148997296306.mp4</code> قرار بده.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   ASSET CONFIGURATION
+   ------------------------------------------------------------
+   Replace these filenames with your real sticker PNGs / video.
+   Put files under the folders shown. Missing files are handled
+   gracefully (fallback shown, scene never breaks).
+   ============================================================ */
+const ASSETS = {
+  stickers: {
+    hello:        'assets/stickers/سلام.png',
+    thinking:     'assets/stickers/فکر کردن.png',      // hand under chin pose
+    confused:     '',                                  // no file supplied
+    explaining:   'assets/stickers/نه اشتباه گفتی.png', // playful / mildly disappointed
+    proud:        'assets/stickers/آفرین.png',          // approving pose
+    encouraging:  'assets/stickers/نگاه عاشقانه.png',   // calm / loving pose
+    celebrating:  'assets/stickers/نگاه عاشقانه.png',   // happy / loving pose
+  },
+  // per-scene sticker fallback emoji (only shown when the PNG is missing)
+  stickerFallbackEmoji: {
+    hello:'👋', thinking:'🤔', confused:'😅', explaining:'😌',
+    proud:'😎', encouraging:'🤗', celebrating:'🥳',
+  },
+  // gift reveal images (shown when each present is opened)
+  gifts: [
+    'assets/gifts/gift1.png',
+    'assets/gifts/gift2.png',
+  ],
+  video: {
+    src:    'assets/vidu-video-3510148997296306.mp4',
+    poster: '', // e.g. 'assets/video-poster.jpg'  (optional)
+  },
+  // background song — starts when the cake appears (scene 4), loops, no user controls
+  music: 'assets/music/Talk Down & Fedi - Dafi Surprise.mp3',
+};
+
+/* ============================================================
+   PERSIAN DIGIT HELPERS
+   ============================================================ */
+const FA_DIGITS = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+const toFa = (n) => String(n).replace(/\d/g, d => FA_DIGITS[d]);
+
+/* ============================================================
+   SCENE MANAGER
+   ============================================================ */
+const state = {
+  transitioning:false,       // guards against double-clicks
+  branch:null,               // 'A' or 'B' from scene 3
+  current:null,              // currently shown scene
+  history:[],                // stack of forward-visited scenes (for the back button)
+  cake:{ countdownDone:false, blown:false, counting:false },
+};
+
+/* show/hide + wire the back button based on navigation history */
+function updateBackBtn(){
+  const b = document.getElementById('backBtn');
+  if(!b) return;
+  if(state.history.length){ b.classList.add('show'); }
+  else { b.classList.remove('show'); }
+}
+
+function showScene(id, opts){
+  if(state.transitioning) return;
+  const isBack = !!(opts && opts.back);
+  state.transitioning = true;
+
+  const all = document.querySelectorAll('.scene');
+  const target = document.getElementById(id);
+  if(!target){ state.transitioning=false; return; }
+
+  // remember where we came from on forward navigation only
+  if(!isBack && state.current && state.current !== id){
+    state.history.push(state.current);
+  }
+
+  all.forEach(s => s.classList.remove('is-active'));
+  target.classList.add('is-active');
+  state.current = id;
+
+  // dark stage styling for the video scene
+  document.getElementById('stage').classList.toggle('video-mode', id==='scene-6');
+
+  renderProgress(id);
+  updateBackBtn();
+
+  // background music begins the moment the cake appears (within the click gesture)
+  if(id === 'scene-4') startMusic();
+
+  // unlock after entrance animation
+  setTimeout(()=>{ state.transitioning=false; }, 560);
+}
+
+/* return to the actual previous scene the user navigated from */
+function goBack(){
+  if(state.transitioning || !state.history.length) return;
+  const prev = state.history.pop();
+  showScene(prev, { back:true });
+}
+
+/* progress dots across the question/flow steps */
+const STEP_ORDER = ['scene-1','scene-2','scene-3','scene-3a','scene-4','scene-5','scene-6'];
+const STEP_LABEL = { 'scene-1':1,'scene-2':2,'scene-3':3,'scene-3a':3,'scene-4':4,'scene-5':5,'scene-6':6 };
+function renderProgress(id){
+  const bar = document.getElementById('progress');
+  const currentStep = STEP_LABEL[id] || 0;
+  // show progress only on the early question scenes (1–3)
+  if(currentStep > 3){ bar.innerHTML=''; bar.style.display='none'; return; }
+  bar.style.display='flex';
+  bar.innerHTML='';
+  for(let i=1;i<=3;i++){
+    const dot=document.createElement('span');
+    dot.className='dot';
+    if(i < currentStep) dot.classList.add('done');
+    if(i === currentStep) dot.classList.add('current');
+    bar.appendChild(dot);
+  }
+}
+
+/* ============================================================
+   STICKER RENDERER
+   ============================================================ */
+function buildStickers(){
+  document.querySelectorAll('.sticker[data-sticker]').forEach(el=>{
+    const key = el.dataset.sticker;
+    const emoji = ASSETS.stickerFallbackEmoji[key] || '🎈';
+    const img = document.createElement('img');
+    img.alt = '';
+    img.loading = 'lazy';
+    img.onerror = ()=>{ el.classList.add('is-empty'); };
+    const path = ASSETS.stickers[key] || '';
+    img.src = path ? encodeURI(path) : '';
+    // if no path configured at all, go straight to fallback
+    if(!path) el.classList.add('is-empty');
+    const fb = document.createElement('div');
+    fb.className='fallback';
+    fb.textContent = emoji;
+    el.appendChild(img);
+    el.appendChild(fb);
+  });
+}
+
+/* ============================================================
+   CAKE — 17 candles (all lit)
+   ============================================================ */
+function buildCandles(container, count=17){
+  container.innerHTML='';
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');
+    c.className='candle';
+    c.style.animationDelay = (Math.random()*0.6)+'s';
+    c.innerHTML = '<div class="smoke"></div><div class="flame" style="animation-delay:'+(Math.random()*1.1)+'s"></div><div class="wick"></div><div class="stick"></div>';
+    container.appendChild(c);
+  }
+}
+
+/* ============================================================
+   SCENE 4 FLOW:  ready → countdown(5..1) → blow → extinguish
+   ============================================================ */
+function initCakeFlow(){
+  const cake      = document.getElementById('cake');
+  const readyBtn  = document.getElementById('readyBtn');
+  const countBtn  = document.getElementById('countBtn');
+  const blowBtn   = document.getElementById('blowBtn');
+  const status    = document.getElementById('cake-status');
+  const line2     = document.getElementById('cake-line-2');
+  const cd        = document.getElementById('countdown');
+  const cdNum     = document.getElementById('countNum');
+
+  // Reset cake state whenever we enter this scene
+  state.cake = { countdownDone:false, blown:false, counting:false, ready:false };
+  cake.classList.remove('out');
+  readyBtn.classList.remove('hidden');
+  readyBtn.disabled = false;
+  countBtn.classList.add('hidden');
+  blowBtn.classList.add('hidden');
+  blowBtn.disabled = false;
+  status.textContent = '';
+  line2.textContent = 'یه آرزو کن.';
+  cd.classList.remove('show');
+
+  // step 1 — user has made a wish: reveal the "بشمار" button + text (no countdown yet)
+  readyBtn.onclick = ()=>{
+    if(state.cake.ready || state.cake.counting || state.cake.countdownDone) return;
+    state.cake.ready = true;
+    readyBtn.classList.add('hidden');
+    line2.textContent = 'خب، تا ۵ می‌شمارم. بعدش شمع‌ها رو فوت کن!';
+    countBtn.classList.remove('hidden');
+  };
+
+  // step 2 — only now the countdown starts (and can't be triggered twice)
+  countBtn.onclick = ()=>{
+    if(state.cake.counting || state.cake.countdownDone) return;
+    state.cake.counting = true;
+    countBtn.classList.add('hidden');
+    runCountdown();
+  };
+
+  function runCountdown(){
+    const seq = [5,4,3,2,1];
+    cd.classList.add('show');
+    let idx=0;
+    const step=()=>{
+      if(idx>=seq.length){
+        cd.classList.remove('show');
+        state.cake.counting=false;
+        state.cake.countdownDone=true;
+        status.textContent = 'حالا فوت کن!';
+        blowBtn.classList.remove('hidden');
+        return;
+      }
+      cdNum.textContent = toFa(seq[idx]);
+      cdNum.classList.remove('tick'); void cdNum.offsetWidth; cdNum.classList.add('tick');
+      idx++;
+      setTimeout(step, 1000);
+    };
+    step();
+  }
+
+  const extinguish = ()=>{
+    if(state.cake.blown) return;   // prevent multiple activations
+    state.cake.blown = true;
+    cake.classList.add('out');
+    blowBtn.classList.add('hidden');
+    blowBtn.disabled = true;
+    status.textContent = '';
+    // brief smoke settles, then go straight to the celebration scene
+    setTimeout(()=> startCelebration(), 900);
+  };
+
+  blowBtn.onclick = extinguish;   // mandatory, always works
+}
+
+/* ============================================================
+   SCENE 5 — celebration (confetti, balloons, hearts)
+   ============================================================ */
+function startCelebration(){
+  showScene('scene-5');
+  const moreBtn = document.getElementById('moreBtn');
+  moreBtn.classList.add('hidden');
+  launchConfetti();
+  launchBalloons();
+  spawnFloatingHearts(document.getElementById('scene-5'));
+  // reveal the next button 2–3s after the animation begins
+  setTimeout(()=> moreBtn.classList.remove('hidden'), 2600);
+}
+
+const CONFETTI_COLORS=['#d98aa6','#d9b878','#7c3a52','#f4d9b3','#efe9fb','#c26a8a'];
+function launchConfetti(){
+  const fx=document.getElementById('fx');
+  for(let i=0;i<90;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=CONFETTI_COLORS[i%CONFETTI_COLORS.length];
+    c.style.borderRadius=Math.random()<.5?'2px':'50%';
+    c.style.animationDuration=(2.4+Math.random()*2.2)+'s';
+    c.style.animationDelay=(Math.random()*0.8)+'s';
+    fx.appendChild(c);
+    setTimeout(()=>c.remove(), 6000);
+  }
+}
+function launchBalloons(){
+  const fx=document.getElementById('fx');
+  const colors=['#d98aa6','#d9b878','#7c3a52','#9f7bd0','#f4a6b8'];
+  for(let i=0;i<8;i++){
+    const b=document.createElement('div');
+    b.className='balloon';
+    b.style.left=(6+Math.random()*88)+'vw';
+    b.style.background=colors[i%colors.length];
+    b.style.setProperty('--sway',(Math.random()*80-40)+'px');
+    b.style.animationDuration=(4+Math.random()*3)+'s';
+    b.style.animationDelay=(Math.random()*1.5)+'s';
+    fx.appendChild(b);
+    setTimeout(()=>b.remove(), 9000);
+  }
+}
+function spawnFloatingHearts(root){
+  for(let i=0;i<10;i++){
+    const h=document.createElement('div');
+    h.className='floatheart';
+    h.textContent=Math.random()<.5?'♥':'✦';
+    h.style.left=(10+Math.random()*80)+'%';
+    h.style.top=(30+Math.random()*50)+'%';
+    h.style.fontSize=(14+Math.random()*18)+'px';
+    h.style.animationDuration=(2.5+Math.random()*2)+'s';
+    h.style.animationDelay=(Math.random()*1.5)+'s';
+    root.appendChild(h);
+    setTimeout(()=>h.remove(), 6000);
+  }
+}
+
+/* ambient decorations on load (subtle, always present) */
+function buildAmbient(){
+  const amb=document.getElementById('ambient');
+  const glyphs=['♥','✦','✧','♡','⭐'];
+  for(let i=0;i<12;i++){
+    const d=document.createElement('div');
+    d.className='deco';
+    d.textContent=glyphs[i%glyphs.length];
+    d.style.left=Math.random()*100+'vw';
+    d.style.top=Math.random()*100+'vh';
+    d.style.color=(i%2)?'var(--rose)':'var(--gold)';
+    d.style.fontSize=(12+Math.random()*16)+'px';
+    d.style.animationDelay=(Math.random()*5)+'s';
+    d.style.animationDuration=(5+Math.random()*4)+'s';
+    amb.appendChild(d);
+  }
+}
+
+/* ============================================================
+   SCENE 6 — video wiring (graceful fallback, reveal after play)
+   ============================================================ */
+function initVideo(){
+  const frame=document.getElementById('videoFrame');
+  const video=document.getElementById('birthdayVideo');
+  const after=document.getElementById('videoAfter');
+
+  video.src = ASSETS.video.src;
+  if(ASSETS.video.poster) video.poster = ASSETS.video.poster;
+
+  const markNoVideo = ()=> frame.classList.add('no-video');
+  video.addEventListener('error', markNoVideo);
+
+  // if the placeholder file can't load, show fallback instead of broken box
+  video.addEventListener('loadedmetadata', ()=> frame.classList.remove('no-video'));
+
+  // reveal the closing line when playback finishes
+  video.addEventListener('ended', ()=>{
+    after.classList.remove('hidden');
+    after.classList.add('fade-in');
+  });
+
+  // allow replay: nothing extra needed — native controls include replay.
+  // if the browser blocks it, we keep the scene (never auto-skip).
+}
+
+/* ============================================================
+   BACKGROUND MUSIC — starts at the cake, loops, no user controls
+   ============================================================ */
+let musicStarted = false;
+function startMusic(){
+  const a = document.getElementById('bgMusic');
+  if(!a) return;
+  if(!a.src && ASSETS.music){ a.src = encodeURI(ASSETS.music); }
+
+  if(!musicStarted){
+    musicStarted = true;
+    // keep it playing: if anything pauses it (no UI to stop), resume
+    a.addEventListener('pause', ()=>{ if(musicStarted) a.play().catch(()=>{}); });
+  }
+
+  // called from within a click (entering the cake scene), so play() is allowed
+  a.play().catch(()=>{
+    // autoplay blocked — retry on the next user gesture
+    const retry = ()=>{ a.play().catch(()=>{}); window.removeEventListener('pointerdown', retry); };
+    window.addEventListener('pointerdown', retry);
+  });
+}
+
+/* ============================================================
+   SCENE 5B — gifts (open each present to reveal its image)
+   ============================================================ */
+function initGifts(){
+  const gifts = Array.from(document.querySelectorAll('#scene-5b .gift'));
+  const afterMsg = document.getElementById('giftAfterMsg');
+  const mainBtn  = document.getElementById('mainGiftBtn');
+
+  // assign each gift its reveal image (graceful fallback if the file is missing)
+  gifts.forEach((g, i)=>{
+    const img = g.querySelector('.gift-img');
+    const src = ASSETS.gifts && ASSETS.gifts[i];
+    if(src){
+      img.onload  = ()=> g.classList.add('has-img');   // hide emoji overlay
+      img.onerror = ()=>{ img.remove(); };             // keep emoji fallback
+      img.src = encodeURI(src);
+    } else {
+      img.remove(); // no image configured -> emoji only
+    }
+    g.addEventListener('click', ()=> openGift(g));
+  });
+
+  const opened = new Set();
+  function openGift(g){
+    if(g.classList.contains('open')) return;
+    g.classList.add('open');
+    g.classList.remove('hint');
+    opened.add(g.dataset.gift);
+    // once every gift is opened, invite the user to the main gift
+    if(opened.size >= gifts.length){
+      setTimeout(()=>{
+        afterMsg.classList.remove('hidden'); afterMsg.classList.add('fade-in');
+        mainBtn.classList.remove('hidden');
+      }, 650);
+    }
+  }
+
+  mainBtn.onclick = ()=> showScene('scene-6');
+
+  // reset to closed each time the gift scene is (re)entered
+  observeEnter('scene-5b', ()=>{
+    opened.clear();
+    gifts.forEach(g=>{ g.classList.remove('open'); g.classList.add('hint'); });
+    afterMsg.classList.add('hidden'); afterMsg.classList.remove('fade-in');
+    mainBtn.classList.add('hidden');
+  });
+}
+
+/* ============================================================
+   GLOBAL WIRING
+   ============================================================ */
+function wire(){
+  // "data-next" buttons
+  document.querySelectorAll('[data-next]').forEach(btn=>{
+    btn.addEventListener('click', ()=> showScene(btn.dataset.next));
+  });
+
+  // scene 3 branching
+  document.querySelectorAll('[data-branch]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(state.transitioning) return;
+      const which=btn.dataset.branch;
+      state.branch=which;
+      btn.classList.add('chosen');
+      if(which==='A'){
+        showScene('scene-3a');
+      } else {
+        // Option B: proud sticker reaction, then straight to cake.
+        // Build a transient reaction before scene 4 by reusing scene-3a
+        // is NOT correct (that text is for Option A), so we push a
+        // lightweight inline change: go to cake after showing proud line.
+        showScene('scene-3b');
+      }
+    });
+  });
+
+  document.getElementById('moreBtn').addEventListener('click', ()=> showScene('scene-5b'));
+
+  // gift scene: open presents, then continue to the main gift (video)
+  initGifts();
+
+  // back button — returns to the previous step via navigation history
+  document.getElementById('backBtn').addEventListener('click', goBack);
+
+  // clear the chosen option each time the question scene is (re)shown
+  observeEnter('scene-3', ()=>{
+    document.querySelectorAll('#scene-3 .option').forEach(o=>o.classList.remove('chosen'));
+  });
+
+  // re-init the cake flow whenever the cake scene is entered
+  observeEnter('scene-4', initCakeFlow);
+  observeEnter('scene-5', ()=> buildCandles(document.getElementById('candles2'),17));
+}
+
+/* Option B proud reaction scene is created dynamically to keep the
+   HTML declarative for the main flow. Insert it after scene-3. */
+function ensureOptionBScene(){
+  if(document.getElementById('scene-3b')) return;
+  const s=document.createElement('section');
+  s.className='scene'; s.id='scene-3b'; s.dataset.step='3';
+  s.innerHTML =
+    '<div class="sticker" data-sticker="proud"></div>'+
+    '<div class="card">'+
+      '<div class="text" style="font-weight:800;color:var(--rose-deep);font-size:clamp(19px,5.2vw,24px);">آفرین کوچولو امروز تولد توعهه</div>'+
+      '<div class="text">خب بریم که برات کیک تولد گرفتم</div>'+
+      '<button class="btn" data-next="scene-4">بریییم!</button>'+
+    '</div>';
+  document.getElementById('scene-3').after(s);
+  // wire the new button
+  s.querySelectorAll('[data-next]').forEach(btn=>{
+    btn.addEventListener('click', ()=> showScene(btn.dataset.next));
+  });
+  // build its sticker
+  const sk=s.querySelector('.sticker');
+  buildOneSticker(sk);
+}
+
+function buildOneSticker(el){
+  const key=el.dataset.sticker;
+  const emoji=ASSETS.stickerFallbackEmoji[key]||'🎈';
+  const img=document.createElement('img'); img.alt='';
+  img.onerror=()=> el.classList.add('is-empty');
+  const path=ASSETS.stickers[key]||'';
+  img.src=path?encodeURI(path):'';
+  if(!path) el.classList.add('is-empty');
+  const fb=document.createElement('div'); fb.className='fallback'; fb.textContent=emoji;
+  el.appendChild(img); el.appendChild(fb);
+}
+
+/* run a callback each time a scene becomes active */
+function observeEnter(id, cb){
+  const el=document.getElementById(id);
+  const mo=new MutationObserver(()=>{
+    if(el.classList.contains('is-active')) cb();
+  });
+  mo.observe(el,{attributes:true,attributeFilter:['class']});
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  ensureOptionBScene();
+  buildStickers();
+  buildAmbient();
+  buildCandles(document.getElementById('candles'), 17);
+  buildCandles(document.getElementById('candles2'), 17);
+  buildCandles(document.getElementById('candles3'), 17);
+  initVideo();
+  wire();
+  showScene('scene-1');
+});
+</script>
+</body>
+</html>
